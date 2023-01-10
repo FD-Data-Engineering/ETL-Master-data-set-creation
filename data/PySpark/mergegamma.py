@@ -41,8 +41,7 @@ df_property_csv = (
     .option("header", True)
     .option("encoding", "UTF-8")
     .option("mode", "FAILFAST")
-    .option("inferSchema", True)
-    #.schema(df_property_schema)
+    .schema(df_property_schema)
     .load(propertyData)
 )
 
@@ -73,7 +72,6 @@ df_flood_csv = (
     .option("header", True)
     .option("encoding", "UTF-8")
     .option("mode", "FAILFAST")
-    #.option("inferSchema", True)
     .schema(df_flood_schema)
     .load(floodData)
 )
@@ -87,7 +85,7 @@ df_merged_gamma_data = df_property_csv.join(df_ber_csv,df_property_csv.ecad_id =
 df_merged_gamma_data.printSchema()
 df_merged_gamma_data.show(100,False)
 
-df_merged_gamma_data.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/dt="+dtStr+"/")
+df_merged_gamma_data.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma/dt="+dtStr+"/")
 
 #read and rewrite with different name using python3
 
