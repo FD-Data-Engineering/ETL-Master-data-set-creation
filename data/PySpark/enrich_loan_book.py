@@ -35,40 +35,49 @@ print("READING CSV FILES")
 print("######################################")
 
 
-df_gamma_schema=StructType().add("ecad_id",IntegerType(),True).add("building_id",IntegerType(),True).add("address_line_1",StringType(),True).add("address_line_2",StringType(),True).add("address_line_3",StringType(),True).add("address_line_4",StringType(),True).add("address_line_5",StringType(),True).add("address_line_6",StringType(),True).add("address_line_7",StringType(),True).add("address_line_8",StringType(),True).add("address_line_9",StringType(),True).add("etrs89_lat",DoubleType(),True).add("etrs89_long",DoubleType(),True).add("ber_rating",StringType(),True).add("ber_rating_kwh",DoubleType(),True).add("co2_emission",DoubleType(),True).add("riverrp",IntegerType(),True).add("rmax20",DoubleType(),True).add("rmax75",DoubleType(),True).add("rmax100",DoubleType(),True).add("rmax200",DoubleType(),True).add("rmax1000",DoubleType(),True).add("sop_ri",IntegerType(),True).add("coastaludrp",IntegerType(),True).add("cudmax75",DoubleType(),True).add("cudmax100",DoubleType(),True).add("cudmax200",DoubleType(),True).add("cudmax1000",DoubleType(),True).add("swaterrp",IntegerType(),True).add("swmax75",DoubleType(),True).add("swmax200",DoubleType(),True).add("swmax1000",DoubleType(),True).add("model_river",StringType(),True).add("model_coastal",StringType(),True).add("model_sw",StringType(),True).add("r20matrix",IntegerType(),True).add("r75matrix",IntegerType(),True).add("r100matrix",IntegerType(),True).add("r200matrix",IntegerType(),True).add("r1000matrix",IntegerType(),True).add("cud75matrix",IntegerType(),True).add("cud100matrix",IntegerType(),True).add("cud200matrix",IntegerType(),True).add("cud1000matrix",IntegerType(),True).add("sw75matrix",IntegerType(),True).add("sw200matrix",IntegerType(),True).add("sw1000matrix",IntegerType(),True).add("river_floodscore_ud",IntegerType(),True).add("coastal_floodscore_ud",IntegerType(),True).add("surfacewater_floodscore_ud",IntegerType(),True).add("river_floodscore_def",IntegerType(),True).add("floodscore_ud",IntegerType(),True).add("floodscore_def",IntegerType(),True).add("unflood_value",IntegerType(),True).add("unflood_heightband",StringType(),True).add("floodability_index_ud",StringType(),True).add("floodability_index_def",StringType(),True)
+df_gamma_schema=StructType().add("ecad_id",IntegerType(),True).add("building_id",IntegerType(),True).add("address_line_1",StringType(),True).add("address_line_2",StringType(),True).add("address_line_3",StringType(),True).add("address_line_4",StringType(),True).add("address_line_5",StringType(),True).add("address_line_6",StringType(),True).add("address_line_7",StringType(),True).add("address_line_8",StringType(),True).add("address_line_9",StringType(),True).add("etrs89_lat",DoubleType(),True).add("etrs89_long",DoubleType(),True).add("ber_rating",StringType(),True).add("ber_rating_kwh",DoubleType(),True).add("co2_emission",DoubleType(),True).add("riverrp",IntegerType(),True).add("rmax20",DoubleType(),True).add("rmax75",DoubleType(),True).add("rmax100",DoubleType(),True).add("rmax200",DoubleType(),True).add("rmax1000",DoubleType(),True).add("sop_ri",IntegerType(),True).add("coastaludrp",IntegerType(),True).add("cudmax75",DoubleType(),True).add("cudmax100",DoubleType(),True).add("cudmax200",DoubleType(),True).add("cudmax1000",DoubleType(),True).add("swaterrp",IntegerType(),True).add("swmax75",DoubleType(),True).add("swmax200",DoubleType(),True).add("swmax1000",DoubleType(),True).add("model_river",StringType(),True).add("model_coastal",StringType(),True).add("model_sw",StringType(),True).add("r20matrix",IntegerType(),True).add("r75matrix",IntegerType(),True).add("r100matrix",IntegerType(),True).add("r200matrix",IntegerType(),True).add("r1000matrix",IntegerType(),True).add("cud75matrix",IntegerType(),True).add("cud100matrix",IntegerType(),True).add("cud200matrix",IntegerType(),True).add("cud1000matrix",IntegerType(),True).add("sw75matrix",IntegerType(),True).add("sw200matrix",IntegerType(),True).add("sw1000matrix",IntegerType(),True).add("river_floodscore_ud",IntegerType(),True).add("coastal_floodscore_ud",IntegerType(),True).add("surfacewater_floodscore_ud",IntegerType(),True).add("river_floodscore_def",IntegerType(),True).add("floodscore_ud",IntegerType(),True).add("floodscore_def",IntegerType(),True).add("unflood_value",IntegerType(),True).add("unflood_heightband",StringType(),True).add("floodability_index_ud",StringType(),True).add("floodability_index_def",StringType(),True).add("_corrupt_record", StringType(), True)
 
 df_gamma_csv = (
     spark.read
     .format("csv")
     .option("header", True)
     .option("encoding", "UTF-8")
-    .option("mode", "FAILFAST")
+    .option("mode", "PERMISSIVE")
+    .option("columnNameOfCorruptRecord", "_corrupt_record")
     .schema(df_gamma_schema)
     .load(gammaData)
-)
-
-df_gamma_csv.printSchema()
-df_gamma_csv.show(100,False)
+).cache()
 
 
-df_lnbk_schema=StructType().add("ecad_id",IntegerType(),True).add("Asset_id",IntegerType(),True).add("product",StringType(),True).add("term",IntegerType(),True).add("Rate/Margin",DoubleType(),True).add("Disbursment_Date",StringType(),True).add("Closing_Date",StringType(),True).add("Initial_Borrow_Capital",DoubleType(),True).add("LTV",DoubleType(),True).add("Monthly_Repayment",DoubleType(),True).add("Next_Payment_Due",StringType(),True).add("Monthly_Capital_Repayment",DoubleType(),True).add("Months_Paid",IntegerType(),True).add("Months_Due",IntegerType(),True).add("Property_Valuation",DoubleType(),True).add("Initial_Deposit",DoubleType(),True).add("Mortgage_Outstanding",DoubleType(),True)
+df_gamma_corrupt = df_gamma_csv.filter("_corrupt_record is not null")
+df_gamma = df_gamma_csv.filter("_corrupt_record is null").drop("_corrupt_record")
+
+df_gamma.printSchema()
+df_gamma.show(100,False)
+
+
+df_lnbk_schema=StructType().add("ecad_id",IntegerType(),True).add("Asset_id",IntegerType(),True).add("product",StringType(),True).add("term",IntegerType(),True).add("Rate/Margin",DoubleType(),True).add("Disbursment_Date",StringType(),True).add("Closing_Date",StringType(),True).add("Initial_Borrow_Capital",DoubleType(),True).add("LTV",DoubleType(),True).add("Monthly_Repayment",DoubleType(),True).add("Next_Payment_Due",StringType(),True).add("Monthly_Capital_Repayment",DoubleType(),True).add("Months_Paid",IntegerType(),True).add("Months_Due",IntegerType(),True).add("Property_Valuation",DoubleType(),True).add("Initial_Deposit",DoubleType(),True).add("Mortgage_Outstanding",DoubleType(),True).add("_corrupt_record", StringType(), True)
 
 df_lnbk_csv = (
     spark.read
     .format("csv")
     .option("header", True)
     .option("encoding", "UTF-8")
-    .option("mode", "FAILFAST")
+    .option("mode", "PERMISSIVE")
+    .option("columnNameOfCorruptRecord", "_corrupt_record")
     .schema(df_lnbk_schema)
     .load(loanBookData)
-)
+).cache()
 
-df_lnbk_csv.printSchema()
-df_lnbk_csv.show(100,False)
+df_lnbk_corrupt = df_lnbk_csv.filter("_corrupt_record is not null")
+df_lnbk = df_lnbk_csv.filter("_corrupt_record is null").drop("_corrupt_record")
+
+df_lnbk.printSchema()
+df_lnbk.show(100,False)
 
 
 
-df_enriched_lnbk = df_gamma_csv.join(df_lnbk_csv,df_lnbk_csv.ecad_id == df_gamma_csv.ecad_id,"left_outer").drop(df_lnbk_csv.ecad_id)
+df_enriched_lnbk = df_gamma.join(df_lnbk,df_lnbk.ecad_id == df_gamma.ecad_id,"left_outer").drop(df_lnbk.ecad_id)
 #               
 #
 df_enriched_lnbk.printSchema()
