@@ -2,6 +2,7 @@ import sys
 import numpy as np 
 import pandas as pd 
 import folium
+from folium import plugins
 from folium.plugins import Search
 from functools import reduce
 from glob import glob
@@ -14,7 +15,8 @@ print("READING PUBLISHED GAMMA-LOAN DATA FILE")
 print("######################################")
 
 dtStr = datetime.today().strftime('%Y%m%d')
-file = glob('/mnt/c/Users/snavghare/My_Drive/Project/data/fd_gamma_data-20221216/dt='+dtStr+'/part*.csv')[0]
+file = glob('/usr/local/spark/resources/data/published/enriched_loan_book/dt='+dtStr+'/part*.csv')[0]
+#file = glob('/usr/local/spark/resources/data/published/enriched_loan_book/dt=20230112/part*.csv')[0]
 df_gamma_loan = pd.read_csv(file)
 
 #Sligo co-ordinates
@@ -527,7 +529,7 @@ for d in df_gamma_loan.iterrows():
             ).add_to(sligo_ber)
 
 sligo_ber = add_legend(sligo_ber, 'Building Energy Rating', colors = list(colors_ber.values()), labels = list(colors_ber.keys()))
-sligo_ber.save('/mnt/c/Users/snavghare/My_Drive/Project/Output/Sligo_Energy_Rating.html')
+sligo_ber.save('/usr/local/spark/resources/data/visualization/Sligo_Energy_Rating.html')
 print("BER RATING MAP GENERATED AND SAVED")
 
 #Plotting flood_rating data
@@ -550,7 +552,7 @@ for d in df_gamma_loan.iterrows():
             ).add_to(sligo_flood)
 
 sligo_flood = add_legend(sligo_flood, 'Likelihood of flooding', colors = list(colors_flood.values()), labels = ('Very Low', 'Low', 'Moderate', 'Moderate to High', 'High', 'Very High'))
-sligo_flood.save('/mnt/c/Users/snavghare/My_Drive/Project/Output/Sligo_Flood_Rating.html')
+sligo_flood.save('/usr/local/spark/resources/data/visualization/Sligo_Flood_Rating.html')
 print("FLOOD RATING MAP GENERATED AND SAVED")
 
 #Plotting gamma_loan data - index search
@@ -566,5 +568,5 @@ for d in df_gamma_loan.iterrows():
         popup = folium.Popup(folium.Html(html, script=True), max_width=600)
         folium.Marker(location=[d[1]["etrs89_lat"], d[1]["etrs89_long"]], popup=popup,name=d[1]["ecad_id"]).add_to(cluster)
 Search(cluster,search_label='name',placeholder='Search for ECAD ID').add_to(Sligo_gamma_loan)            
-Sligo_gamma_loan.save('/mnt/c/Users/snavghare/My_Drive/Project/Output/Sligo_Gamma_Loan_IndexSearch.html')
+Sligo_gamma_loan.save('/usr/local/spark/resources/data/visualization/Sligo_Gamma_Loan_IndexSearch.html')
 print("GAMMA-LOAN INDEX SEARCH MAP GENERATED AND SAVED")
