@@ -99,6 +99,7 @@ df_flood = df_flood_csv.filter("_corrupt_record is null").drop("_corrupt_record"
 df_flood.printSchema()
 df_flood.show(100,False)
 
+
 df_merged_gamma_data = df_ecad.join(df_ber,df_ecad.ecad_id == df_ber.ecad_id,"inner").join(df_flood,df_ecad.building_id == df_flood.ecad_id,"inner").drop(df_ber.ecad_id).drop(df_flood.ecad_id)
 #               
 #
@@ -106,6 +107,14 @@ df_merged_gamma_data.printSchema()
 df_merged_gamma_data.show(100,False)
 
 df_merged_gamma_data.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma/dt="+dtStr+"")
+
+
+#write bad records
+df_ecad_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/ecad")
+
+df_ber_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/energy_rating")
+
+df_flood_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/flood_index")
 
 
 #write bad records
