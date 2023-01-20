@@ -10,11 +10,12 @@ from datetime import datetime, timedelta
 ###############################################
 spark_master = "spark://spark:7077"
 postgres_driver_jar = "/usr/local/spark/resources/jars/postgresql-9.4.1207.jar"
+dtStr = datetime.today().strftime('%Y%m%d')
 
-ecad_file = "/usr/local/spark/resources/ETL-Master-data-set-creation/data/ecad_20221216.csv"
-er_file = "/usr/local/spark/resources/ETL-Master-data-set-creation/data/energy_rating_data.csv"
-lb_file = "/usr/local/spark/resources/ETL-Master-data-set-creation/data/Loan_book_4.csv"
-flood_file = "/usr/local/spark/resources/ETL-Master-data-set-creation/data/roi_202111_gamma_eircode_ta.csv"
+ecad_file = "/usr/local/spark/resources/data/raw/gamma/dt="+dtStr+"/ecad_20221216.csv"
+er_file = "/usr/local/spark/resources/data/raw/gamma/dt="+dtStr+"/energy_rating_data.csv"
+lb_file = "/usr/local/spark/resources/data/raw/gamma/dt="+dtStr+"/Loan_book_4.csv"
+flood_file = "/usr/local/spark/resources/data/raw/gamma/dt="+dtStr+"/roi_202111_gamma_eircode_ta.csv"
 #final_file = "/usr/local/spark/resources/data/published/enriched_loan_book/dt=20230112"
 #postgres_db = "jdbc:postgresql://postgres/test"
 #postgres_user = "test"
