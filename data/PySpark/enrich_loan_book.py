@@ -63,7 +63,7 @@ df_gamma.show(100,False)
 
 if df_gamma_corrupt.count() > 0 : 
     logger.info("######################################")
-    logger.info("GAMMA BAD RECORD COUNTS : "+ df_gamma_corrupt.count())
+    logger.info("GAMMA BAD RECORD COUNTS : "+ str(df_gamma_corrupt.count()))
     logger.info("######################################")
 
 logger.info("######################################")
@@ -98,7 +98,7 @@ df_lnbk.show(100,False)
 
 if df_lnbk_corrupt.count() > 0 : 
     logger.info("######################################")
-    logger.info("LOAN BOOK BAD RECORD COUNTS : "+ df_lnbk_corrupt.count())
+    logger.info("LOAN BOOK BAD RECORD COUNTS : "+ str(df_lnbk_corrupt.count()))
     df_lnbk_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/loan_book_rejected/dt="+dtStr+"/")
     logger.info("######################################")
 
