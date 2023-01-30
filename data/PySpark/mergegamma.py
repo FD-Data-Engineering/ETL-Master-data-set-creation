@@ -72,7 +72,7 @@ df_ecad.show(100,False)
 
 if df_ecad_corrupt.count() > 0 : 
     logger.info("######################################")
-    logger.info("ECAD BAD RECORD COUNTS : "+ df_ecad_corrupt.count())
+    logger.info("ECAD BAD RECORD COUNTS : "+ str(df_ecad_corrupt.count()))
     df_ecad_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/ecad")
     logger.info("######################################")
 
@@ -108,7 +108,7 @@ logger.info(df_ber.show(100,False))
 
 if df_ber_corrupt.count() > 0 : 
     logger.info("######################################")
-    logger.info("ENERGY RATING BAD RECORD COUNTS : "+ df_ber_corrupt.count())
+    logger.info("ENERGY RATING BAD RECORD COUNTS : "+ str(df_ber_corrupt.count()))
     df_ber_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/energy_rating")
     logger.info("######################################")
 
@@ -147,7 +147,7 @@ df_flood.show(100,False)
 
 if df_flood_corrupt.count() > 0 : 
     logger.info("######################################")
-    logger.info("FLOOD INDEX BAD RECORD COUNTS : "+ df_flood_corrupt.count())
+    logger.info("FLOOD INDEX BAD RECORD COUNTS : "+ str(df_flood_corrupt.count()))
     df_flood_corrupt.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/staging/gamma_rejected/dt="+dtStr+"/flood_index")
     logger.info("######################################")
 

@@ -52,7 +52,8 @@ spark_job_load_gamma = SparkSubmitOperator(
     name="mergegamma",
     conn_id="spark_default",
     verbose=1,
-    conf={"spark.master":spark_master},
+    conf={"spark.master":spark_master,
+          "spark.executor.extraJavaOptions":"-Dlog4j.configuration=file:///usr/local/spark/logger/log4j.properties"},
     application_args=[ecad_file,er_file,flood_file],
     jars=postgres_driver_jar,
     driver_class_path=postgres_driver_jar,
@@ -65,7 +66,8 @@ spark_job_load_loanBook = SparkSubmitOperator(
     name="load-loanBook",
     conn_id="spark_default",
     verbose=1,
-    conf={"spark.master":spark_master},
+    conf={"spark.master":spark_master,
+          "spark.executor.extraJavaOptions":"-Dlog4j.configuration=file:///usr/local/spark/logger/log4j.properties"},
     application_args=[lb_file],
     jars=postgres_driver_jar,
     driver_class_path=postgres_driver_jar,
@@ -91,6 +93,6 @@ end_load_loanbook = DummyOperator(task_id="end_load_loanbook", dag=dag)
 
 start_load_gamma >> spark_job_load_gamma >>  spark_job_load_loanBook >> job_load_visualization >> end_load_loanbook 
 #start_load_flood >> spark_job_load_flood >> end_load_flood
-#start_load_loanbook >> spark_job_load_loanBook >> end_load_loanbook
+#start_load_loanbook >> spark_job_load_loanBook >> job_load_visualization >> end_load_loanbook
 
 
