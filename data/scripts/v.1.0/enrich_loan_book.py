@@ -18,9 +18,10 @@ logger = log4j_logger.LogManager.getRootLogger()
 # Parameters
 ####################################
 sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf8', buffering=1)
+
 dtStr = datetime.today().strftime('%Y%m%d')
 
-gammaData = "/usr/local/spark/resources/data/staging/gamma/dt="+dtStr+"/part*"
+gammaData = "cos://transformedgammadata.Gamma/merged_gamma_esg/dt="+dtStr+""
 loanBookData = sys.argv[1]
 logger.info("######################################")
 logger.info("READING INPUT FILES")
@@ -37,34 +38,18 @@ logger.info("######################################")
 logger.info("READING GAMMA CSV DATA ")
 logger.info("######################################")
 
-
-df_gamma_schema=StructType().add("ecad_id",IntegerType(),True).add("building_id",IntegerType(),True).add("address_line_1",StringType(),True).add("address_line_2",StringType(),True).add("address_line_3",StringType(),True).add("address_line_4",StringType(),True).add("address_line_5",StringType(),True).add("address_line_6",StringType(),True).add("address_line_7",StringType(),True).add("address_line_8",StringType(),True).add("address_line_9",StringType(),True).add("etrs89_lat",DoubleType(),True).add("etrs89_long",DoubleType(),True).add("ber_rating",StringType(),True).add("ber_rating_kwh",DoubleType(),True).add("co2_emission",DoubleType(),True).add("riverrp",IntegerType(),True).add("rmax20",DoubleType(),True).add("rmax75",DoubleType(),True).add("rmax100",DoubleType(),True).add("rmax200",DoubleType(),True).add("rmax1000",DoubleType(),True).add("sop_ri",IntegerType(),True).add("coastaludrp",IntegerType(),True).add("cudmax75",DoubleType(),True).add("cudmax100",DoubleType(),True).add("cudmax200",DoubleType(),True).add("cudmax1000",DoubleType(),True).add("swaterrp",IntegerType(),True).add("swmax75",DoubleType(),True).add("swmax200",DoubleType(),True).add("swmax1000",DoubleType(),True).add("model_river",StringType(),True).add("model_coastal",StringType(),True).add("model_sw",StringType(),True).add("r20matrix",IntegerType(),True).add("r75matrix",IntegerType(),True).add("r100matrix",IntegerType(),True).add("r200matrix",IntegerType(),True).add("r1000matrix",IntegerType(),True).add("cud75matrix",IntegerType(),True).add("cud100matrix",IntegerType(),True).add("cud200matrix",IntegerType(),True).add("cud1000matrix",IntegerType(),True).add("sw75matrix",IntegerType(),True).add("sw200matrix",IntegerType(),True).add("sw1000matrix",IntegerType(),True).add("river_floodscore_ud",IntegerType(),True).add("coastal_floodscore_ud",IntegerType(),True).add("surfacewater_floodscore_ud",IntegerType(),True).add("river_floodscore_def",IntegerType(),True).add("floodscore_ud",IntegerType(),True).add("floodscore_def",IntegerType(),True).add("unflood_value",IntegerType(),True).add("unflood_heightband",StringType(),True).add("floodability_index_ud",StringType(),True).add("floodability_index_def",StringType(),True).add("_corrupt_record", StringType(), True)
-
-df_gamma_csv = (
+df_gamma = (
     spark.read
-    .format("csv")
-    .option("header", True)
-    .option("encoding", "UTF-8")
-    .option("mode", "PERMISSIVE")
-    .option("columnNameOfCorruptRecord", "_corrupt_record")
-    .schema(df_gamma_schema)
-    .load(gammaData)
+    .parquet(gammaData)
 ).cache()
 
 
-df_gamma_corrupt = df_gamma_csv.filter("_corrupt_record is not null")
-df_gamma = df_gamma_csv.filter("_corrupt_record is null").drop("_corrupt_record")
 
 logger.info("######################################")
 logger.info("GAMMA CSV DATA SCHEMA")
 logger.info("######################################")
 logger.info(df_gamma._jdf.schema().treeString())
 df_gamma.show(100,False)
-
-if df_gamma_corrupt.count() > 0 : 
-    logger.info("######################################")
-    logger.info("GAMMA BAD RECORD COUNTS : "+ str(df_gamma_corrupt.count()))
-    logger.info("######################################")
 
 logger.info("######################################")
 logger.info("GAMMA CSV DATA SUCCESS")
@@ -126,7 +111,7 @@ logger.info("######################################")
 logger.info("WRITING ENRICHED LOAN BOOK CSV")
 logger.info("######################################")
 
-df_enriched_lnbk.coalesce(1).write.option("header",True).mode('overwrite').csv("/usr/local/spark/resources/data/published/enriched_loan_book/dt="+dtStr+"/")
+df_enriched_lnbk.coalesce(1).write.option("header",True).mode('overwrite').csv("cos://publishedgammadata.Gamma/enriched_loanbook_esg_gamma/dt="+dtStr)
 
 logger.info("######################################")
 logger.info("ENRICHED LOAN BOOK CSV WRITE COMPLETE")
