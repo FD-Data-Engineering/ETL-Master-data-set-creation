@@ -7,6 +7,7 @@ import json
 
 now = datetime.now()
 
+
 def generate_access_token():
     api_url = "https://iam.cloud.ibm.com/identity/token"
     dt = "grant_type=urn:ibm:params:oauth:grant-type:apikey&apikey=CcZzswuM7FSjGEJ_fdmnL47OwD401XWpqfwC5jYtBnV8"
@@ -15,7 +16,7 @@ def generate_access_token():
     tokenJson = response.json()
     Access_Token = tokenJson["access_token"]
     Expiration = tokenJson["expiration"]
-    
+
     Variable.set("Access_Token", Access_Token)
     Variable.set("Expiration", Expiration)
 
@@ -27,7 +28,8 @@ default_args = {
     "email_on_failure": False,
     "email_on_retry": False,
     "retries": 1,
-    "retry_delay": timedelta(minutes=1)
+    "retry_delay": timedelta(minutes=1),
+    "schedule_interval": '@hourly',
 }
 
 dag = DAG(
