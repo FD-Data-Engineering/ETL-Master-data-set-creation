@@ -48,7 +48,7 @@ start_load_gamma = DummyOperator(task_id="start_load_gamma", dag=dag)
 
 spark_job_load_gamma = SparkSubmitOperator(
     task_id="spark_job_load_gamma",
-    application="/usr/local/spark/app/mergegamma.py", # Spark application path created in airflow and spark cluster
+    application="/usr/local/spark/app/mergegamma.py", #Spark application path created in airflow and spark cluster
     name="mergegamma",
     conn_id="spark_default",
     verbose=1,
