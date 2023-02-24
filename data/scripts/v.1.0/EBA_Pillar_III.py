@@ -64,7 +64,7 @@ dtStr = datetime.today().strftime('%Y%m%d')
 cos = getCOSconfig()
 itemList = getBucketContents(cos,"publishedgammadata",[dtStr,"csv"])
 print(itemList)
-loanBookData = "cos://publishedgammadata.Gamma/"itemList[0]
+loanBookData = "cos://publishedgammadata.Gamma/"+itemList[0]
 logger.info("######################################")
 logger.info("READING INPUT FILE")
 logger.debug("Enriched Data :: "+loanBookData)
