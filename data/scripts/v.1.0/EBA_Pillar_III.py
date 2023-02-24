@@ -39,12 +39,32 @@ def getCOSconfig():
       endpoint_url=COS_ENDPOINT
   )
   return cos
+  
+def getBucketContents(cos,bucket_name,filterArgs):
+    itemList = []
+    print("Retrieving bucket contents from:{0}".format(bucket_name))
+    try:
+        arr = []
+        files = cos.Bucket(bucket_name).objects.all()
+        for file in files:
+            arr.append("{0}".format(file.key, file.size))
+    
+        itemList = [item for item in arr if all(filters in item for filters in filterArgs)]
+    
+    except ClientError as be:
+        print("CLIENT ERROR: {0}\n".format(be))
+    except Exception as e:
+        print("Unable to retrieve bucket contents: {0}".format(e))
+    return itemList
 
 ####################################
 # Parameters
 ####################################
-
-loanBookData = sys.argv[1]
+dtStr = datetime.today().strftime('%Y%m%d')
+cos = getCOSconfig()
+itemList = getBucketContents(cos,"publishedgammadata",[dtStr,"csv"])
+print(itemList)
+loanBookData = "cos://publishedgammadata.Gamma/"itemList[0]
 logger.info("######################################")
 logger.info("READING INPUT FILE")
 logger.debug("Enriched Data :: "+loanBookData)
