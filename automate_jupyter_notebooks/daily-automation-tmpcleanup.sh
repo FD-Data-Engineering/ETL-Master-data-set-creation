@@ -29,7 +29,7 @@ HOME=/home/notebookuser
 source $HOME/.profile
 cd $HOME/notebooks/crontab
 DATENB=$(date +'%Y-%m-%d')
-NBLOGFILE=$HOME/notebooks/crontab/crontab-run-$DATENB.log
+NBLOGFILE=$HOME/notebooks/crontab/crontab-run-jobtmpcleanup-$DATENB.log
 #
 rm -rf  /tmp/*
 sleep 2
