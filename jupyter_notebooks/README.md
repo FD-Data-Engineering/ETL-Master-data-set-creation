@@ -1,8 +1,9 @@
-This folder hosts the designs for your Openshift K8S deployment of tools and services like :
+# Jupyter_notebook automation
+# HOME=/home/notebookuser
 
-1- Apache Airflow ( airflow:latest )
-  
-2- Airflow supporting redis cache ( redis:5.0.5 )
-  
-3- Airflow supporting metadata database PostgreSQL  ( postgres:9.6 )
-  
+
+1. Run Airflow Node command Line HTTP Requests PACE.ipynb from Jupyter notebook (using run-automation-http-requests-pace.sh > HTTP-Requests-PACE.ipynb )
+2. This will generate checkpoint with HTTP-Requests-PACE-checkpoint_<date>.ipynb
+3. generated .csv file saved in data/pace/pace-fleet-demo-api/<filename and time>
+4. logs are available in data/crontab 
+
