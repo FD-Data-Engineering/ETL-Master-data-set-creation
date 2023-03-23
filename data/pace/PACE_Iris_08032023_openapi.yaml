@@ -1,0 +1,1173 @@
+openapi: 3.0.1
+info:
+  title: PACE Project
+  description: This is the API for the PACE Enterprise API project.
+  version: 1.0.0
+paths:
+  /api/co2metric/{fromDate}/{toDate}:
+    get:
+      tags:
+      - Co2Metric
+      summary: Get Metrics
+      operationId: FindMetric-fm
+      parameters:
+      - name: fromDate
+        in: path
+        description: The earliest date for the data set being queried. Format YYYY-MM-DD
+        required: true
+        schema:
+          type: string
+          description: The earliest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-01-01"
+      - name: toDate
+        in: path
+        description: The latest date for the data set being queried. Format YYYY-MM-DD
+        required: true
+        schema:
+          type: string
+          description: The latest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-12-31"
+      - name: aircraftCategory
+        in: query
+        description: The Aircraft Manufacturer
+        schema:
+          type: string
+          description: The Aircraft Manufacturer
+          example: narrow-body
+          enum:
+          - wide-body
+          - narrow-body
+          - regional-jet
+          - turbo-prop
+          - business-jet
+      - name: aircraftIata
+        in: query
+        description: 'The IATA code for the aircraft type used on the route. If included
+          in the request with a portfolioId, the value must reflect a valid value
+          from the portfolio. Note: The API supports both the Aircraft IATA and ICAO
+          fields as different clients may have a preference to use one code set over
+          the other, please only use 1 field in your request'
+        schema:
+          type: string
+          description: 'The IATA code for the aircraft type used on the route. If
+            included in the request with a portfolioId, the value must reflect a valid
+            value from the portfolio. Note: The API supports both the Aircraft IATA
+            and ICAO fields as different clients may have a preference to use one
+            code set over the other, please only use 1 field in your request'
+          example: "320"
+      - name: aircraftIcao
+        in: query
+        description: 'The ICAO code for the aircraft type used on the route. If included
+          in the request with a portfolioId, the value must reflect a valid value
+          from the portfolio. Note: The API supports both the Aircraft IATA and ICAO
+          fields as different clients may have a preference to use one code set over
+          the other, please only use 1 field in your request'
+        schema:
+          type: string
+          description: 'The ICAO code for the aircraft type used on the route. If
+            included in the request with a portfolioId, the value must reflect a valid
+            value from the portfolio. Note: The API supports both the Aircraft IATA
+            and ICAO fields as different clients may have a preference to use one
+            code set over the other, please only use 1 field in your request'
+          example: A320
+      - name: aircraftManufacturer
+        in: query
+        description: The Aircraft Manufacturer
+        schema:
+          type: string
+          description: The Aircraft Manufacturer
+          example: Airbus
+      - name: aircraftMsn
+        in: query
+        description: The aircraft manufacturer serial number (MSN). If included in
+          the request with a portfolioId, the value should reflect a valid value from
+          the portfolio. As MSN's are not globally unique, the aircraftManufacturer
+          and aircraftCategory field should be provided when requesting MSN level
+          data to improve accuracy
+        schema:
+          type: string
+          description: The aircraft manufacturer serial number (MSN). If included
+            in the request with a portfolioId, the value should reflect a valid value
+            from the portfolio. As MSN's are not globally unique, the aircraftManufacturer
+            and aircraftCategory field should be provided when requesting MSN level
+            data to improve accuracy
+          example: "1025"
+      - name: carbonCost
+        in: query
+        description: When included in the request, the API will base the carbon cost
+          based on this user-defined CO2 per tonne value. This field must be present
+          when requesting the 'carbonCost' response metric
+        schema:
+          type: number
+          description: When included in the request, the API will base the carbon
+            cost based on this user-defined CO2 per tonne value. This field must be
+            present when requesting the 'carbonCost' response metric
+          format: double
+          example: 90.5
+      - name: destinationAirportIata
+        in: query
+        description: IATA assigned code of the origin airport
+        schema:
+          type: string
+          description: IATA assigned code of the origin airport
+          example: CDG
+      - name: destinationCountryIso
+        in: query
+        description: ISO 3166-1 alpha-3 code of the destination country
+        schema:
+          type: string
+          description: ISO 3166-1 alpha-3 code of the destination country
+          example: GBR
+      - name: destinationRegionCode
+        in: query
+        description: Geographical region. If including this field with a destinationCountryIso,
+          please ensure the country is within the region
+        schema:
+          type: string
+          description: Geographical region. If including this field with a destinationCountryIso,
+            please ensure the country is within the region
+          example: Europe
+      - name: fuelCost
+        in: query
+        description: When included in the request, the API will base the carbon cost
+          based on this user-defined fuel cost. This field must be present when requesting
+          the 'fuelCost' response metric
+        schema:
+          type: number
+          description: When included in the request, the API will base the carbon
+            cost based on this user-defined fuel cost. This field must be present
+            when requesting the 'fuelCost' response metric
+          format: double
+          example: 74.5
+      - name: loadFactor
+        in: query
+        description: The user has the ability to over-ride any PACE defined passenger
+          load-factor. Where this field is not populated the response data will utilise
+          the PACE default data for this metric. A value of '81.21' in this field
+          implies that all flights within the returned dataset have a load-factor
+          of 81.21. The load-factor value is a key input field for all RPK related
+          metrics
+        schema:
+          type: number
+          description: The user has the ability to over-ride any PACE defined passenger
+            load-factor. Where this field is not populated the response data will
+            utilise the PACE default data for this metric. A value of '81.21' in this
+            field implies that all flights within the returned dataset have a load-factor
+            of 81.21. The load-factor value is a key input field for all RPK related
+            metrics
+          format: double
+          example: 80
+      - name: metricFields
+        in: query
+        description: List the metrics in this function that will be returned in the
+          API response. At least 1 metric field must be requested
+        schema:
+          type: string
+          description: List the metrics in this function that will be returned in
+            the API response. At least 1 metric field must be requested
+          example: co2,co2e,decouplingIndex,flightCycles,ask,co2PerAsk,co2PerAskPaxOnly,rpk,co2PerRpk,co2PerRpkPaxOnly,atk,co2PerAtk,rtk,co2PerRtk,wellToTank,tankToWake,wellToWake,carbonCost,fuelCost
+      - name: operatorIata
+        in: query
+        description: IATA assigned code of the origin airport (ie. “BA” = British
+          Airways) If included in the request with a portfolioId, the value should
+          reflect a valid value from the portfolio
+        schema:
+          type: string
+          description: IATA assigned code of the origin airport (ie. “BA” = British
+            Airways) If included in the request with a portfolioId, the value should
+            reflect a valid value from the portfolio
+          example: BA
+      - name: originAirportIata
+        in: query
+        description: IATA assigned code of the origin airport
+        schema:
+          type: string
+          description: IATA assigned code of the origin airport
+          example: JFK
+      - name: originCountryIso
+        in: query
+        description: ISO 3166-1 alpha-3 code of the country of origin
+        schema:
+          type: string
+          description: ISO 3166-1 alpha-3 code of the country of origin
+          example: USA
+      - name: originRegionCode
+        in: query
+        description: Geographical region. If including this field with a originCountryIso,
+          please ensure the country is within the region
+        schema:
+          type: string
+          description: Geographical region. If including this field with a originCountryIso,
+            please ensure the country is within the region
+          example: Asia
+      - name: paxCargoRatio
+        in: query
+        description: The user has the ability to over-ride any PACE defined Cargo:Passenger
+          ratio. Where this field is not populated the response data will utilise
+          the PACE default data for this metric. A value of '55.21' in this field
+          implies that 55.21 of all emissions for all flights within the returned
+          dataset are attributed to passengers, with the remaining 44.79 of emissions
+          attributes to cargo
+        schema:
+          type: number
+          description: The user has the ability to over-ride any PACE defined Cargo:Passenger
+            ratio. Where this field is not populated the response data will utilise
+            the PACE default data for this metric. A value of '55.21' in this field
+            implies that 55.21 of all emissions for all flights within the returned
+            dataset are attributed to passengers, with the remaining 44.79 of emissions
+            attributes to cargo
+          format: double
+          example: 74.5
+      - name: portfolioId
+        in: query
+        description: The portfolio ID is generated by PACE and returned in the API
+          response when the portfolio is created. All subsequent API calls relating
+          to a specific portfolio must include this ID. It is possible to query data
+          without a portfolio ID, this allows the user to access all flight data,
+          ie. flight activity for aircraft and airlines outside of any configured
+          portfolios
+        schema:
+          type: integer
+          description: The portfolio ID is generated by PACE and returned in the API
+            response when the portfolio is created. All subsequent API calls relating
+            to a specific portfolio must include this ID. It is possible to query
+            data without a portfolio ID, this allows the user to access all flight
+            data, ie. flight activity for aircraft and airlines outside of any configured
+            portfolios
+          format: int32
+          example: 123456
+      - name: sectorLength.gte
+        in: query
+        description: The flight distance (KM) range. ie. less than 2000 greater than
+          1000
+        schema:
+          type: integer
+          description: The flight distance (KM) range. ie. less than 2000 greater
+            than 1000
+          format: int32
+          example: 1000
+      - name: sectorLength.lte
+        in: query
+        description: The flight distance (KM) range. ie. less than 2000 greater than
+          1000
+        schema:
+          type: integer
+          description: The flight distance (KM) range. ie. less than 2000 greater
+            than 1000
+          format: int32
+          example: 2000
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Co2Metric'
+  /api/portfolio:
+    get:
+      tags:
+      - Portfolio
+      summary: Retrieve all the portfolios
+      operationId: GetAllPortfolios-fm
+      parameters:
+      - name: order
+        in: query
+        description: Sort order (asc|desc)
+        schema:
+          type: string
+          description: Sort order (asc|desc)
+          example: id desc
+      - name: page
+        in: query
+        description: Page number. Started from 1
+        schema:
+          type: integer
+          description: Page number. Started from 1
+          format: int32
+          example: 1
+      - name: pageSize
+        in: query
+        description: Page size. Max number of item per page. Max page size is 100
+        schema:
+          type: integer
+          description: Page size. Max number of item per page. Max page size is 100
+          format: int32
+          example: 50
+          maximum: 100
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioPaginatedResponse'
+    post:
+      tags:
+      - Portfolio
+      summary: Creates a new portfolio
+      operationId: PorfolioCreation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PorfolioCreationInput'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+  /api/portfolio/{portfolioId}:
+    get:
+      tags:
+      - Portfolio
+      summary: Retrieve a portfolio by id
+      operationId: GetPortfolio-fm
+      parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+    put:
+      tags:
+      - Portfolio
+      summary: Renames an existing portfolio
+      operationId: PorfolioUpdate
+      parameters:
+      - name: portfolioId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PorfolioUpdateInput'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Portfolio'
+  /api/portfolio/{portfolioId}/aircrafts:
+    put:
+      tags:
+      - Portfolio
+      summary: "This endpoint is used for updating Portfolio's aircrafts. For this
+        endpoint, PortfolioID should be specified and .csv file should be uploaded
+        which contains aircrafts that should be updated.\n\t\tEndpoint returns internal
+        ID of process which can later be used in other endpoints for retrieving processed
+        file or retrieving status for processed file."
+      operationId: UpdatePortfolioAircrafts
+      parameters:
+      - name: portfolioId
+        in: path
+        description: Pace generated Portfolio ID
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: file
+        in: formData
+        type: file
+        description: The .csv file to upload.
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioPortfolioUpdateStatusDto'
+  /api/portfolio/{portfolioId}/aircrafts/{processid}:
+    get:
+      tags:
+      - Portfolio
+      summary: "This endpoint returns file with processed aircrafts in .csv format.\n\t\tPlease
+        use option 'Download file' below to download report"
+      operationId: PorfolioUpdateFile
+      parameters:
+      - name: portfolioId
+        in: path
+        description: Pace generated Portfolio ID
+        required: true
+        schema:
+          type: integer
+          description: Pace generated Portfolio ID
+          format: int64
+      - name: processid
+        in: path
+        description: Pace generated Process ID which is generated and returned once
+          the request for updating Portfolio is made.
+        required: true
+        schema:
+          type: integer
+          description: Pace generated Process ID which is generated and returned once
+            the request for updating Portfolio is made.
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/portfolio/{portfolioId}/aircrafts/{processid}/status:
+    get:
+      tags:
+      - Portfolio
+      summary: "This endpoint returns status of processed Portfolio Aircrafts file.
+        \n\t\tStatus will contain information about how many aircrafts were processed
+        (added, deleted or edited) and were there some errors that occured while file
+        was being processed."
+      operationId: PorfolioUpdateStatus
+      parameters:
+      - name: portfolioId
+        in: path
+        description: Pace generated Portfolio ID
+        required: true
+        schema:
+          type: integer
+          description: Pace generated Portfolio ID
+          format: int64
+      - name: processid
+        in: path
+        description: Pace generated Process ID which is generated and returned once
+          the request for updating Portfolio is made.
+        required: true
+        schema:
+          type: integer
+          description: Pace generated Process ID which is generated and returned once
+            the request for updating Portfolio is made.
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortfolioPortfolioUpdateStatusDto'
+  /api/reachability/check:
+    get:
+      tags:
+      - Reachability
+      summary: Checks health
+      operationId: reachability-check-run-fm
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthcheckReachabilityResponse'
+  /api/report/{type}/{reportId}:
+    get:
+      tags:
+      - Report
+      summary: Get report file by type and generated id
+      description: "This endpoint returns generated report file in .csv format. Please
+        specify report type ('portfolio', 'paceflights') and report ID that was generated
+        to retrieve the file. \n\t\tOnce the report is retrieved, use the option 'Download
+        file' below to download report."
+      operationId: GetReport-fm
+      parameters:
+      - name: reportId
+        in: path
+        description: The report ID that was generated by PACE and returned in the
+          API response when the report is created
+        required: true
+        schema:
+          type: integer
+          description: The report ID that was generated by PACE and returned in the
+            API response when the report is created
+          format: int32
+      - name: type
+        in: path
+        description: 'The report type for which to request report status or file.
+          Available types are: ''portfolio'', ''paceflights'''
+        required: true
+        schema:
+          type: string
+          description: 'The report type for which to request report status or file.
+            Available types are: ''portfolio'', ''paceflights'''
+          enum:
+          - portfolio
+          - paceflights
+      responses:
+        "200":
+          description: OK
+  /api/report/{type}/{reportId}/status:
+    get:
+      tags:
+      - Report
+      summary: Get status of report that was set to generate by type and generated
+        id
+      description: This endpoint returns status of report that was set to generate.
+        Use this endpoint to check whether report was generated.
+      operationId: GetReportStatus-fm
+      parameters:
+      - name: reportId
+        in: path
+        description: The report ID that was generated by PACE and returned in the
+          API response when the report is created
+        required: true
+        schema:
+          type: integer
+          description: The report ID that was generated by PACE and returned in the
+            API response when the report is created
+          format: int32
+      - name: type
+        in: path
+        description: 'The report type for which to request report status or file.
+          Available types are: ''portfolio'', ''paceflights'''
+        required: true
+        schema:
+          type: string
+          description: 'The report type for which to request report status or file.
+            Available types are: ''portfolio'', ''paceflights'''
+          enum:
+          - portfolio
+          - paceflights
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportReportResponse'
+  /api/report/paceflights:
+    post:
+      tags:
+      - Report
+      summary: Start generating a new Pace flights report by specified parameters
+      description: "This endpoint starts process for generating new Pace flights report
+        based on parameters that were set in Request Body. \n\t\tFor report to be
+        sorted by specific field, please use sort order on fields."
+      operationId: CreatePaceFlightsReport-fm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaceFlightsReport-FmInput'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportReportResponse'
+  /api/report/portfolio:
+    post:
+      tags:
+      - Report
+      summary: "This endpoint starts process for generating Portfolio report file
+        in .csv format. To retrieve portfolio report with data that matches specific\n\t\tdate
+        range please use From and To date values. To retrieve complete portfolio,
+        do not specify date ranges. Use endpoint for retrieving report file to retrieve
+        file."
+      operationId: CreatePortfolioReport-fm
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePortfolioReport-FmInput'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportReportResponse'
+  /healthz:
+    get:
+      tags:
+      - Health
+      summary: Checks health
+      operationId: Run-fm
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthcheckHealthcheckResponse'
+      security: []
+components:
+  schemas:
+    Co2Metric:
+      type: object
+      properties:
+        Co2PerRPKPaxOnly:
+          type: number
+          description: CO2(g) per RPK (PAX Only)
+          format: double
+          example: 74.5
+          nullable: true
+        Co2e:
+          type: number
+          description: Co2 equivalent
+          format: double
+          example: 342.66
+          nullable: true
+        ask:
+          type: number
+          description: ASK - Available Seat Kilometres
+          format: double
+          example: 4.48075e+06
+          nullable: true
+        atk:
+          type: number
+          description: Available Tonnes per Kilometre
+          format: double
+          example: 3.182751e+06
+          nullable: true
+        carbonCost:
+          type: number
+          description: Carbon cost per CO2 tonne
+          format: double
+          example: 544
+          nullable: true
+        co2:
+          type: number
+          description: Absolute CO2
+          format: double
+          example: 340
+          nullable: true
+        co2PerAsk:
+          type: number
+          description: CO2(g) per ASK
+          format: double
+          example: 75.85
+          nullable: true
+        co2PerAskPaxOnly:
+          type: number
+          description: CO2(g) per ASK PAX only (PAX = Passengers)
+          format: double
+          example: 100.5
+          nullable: true
+        co2PerAtk:
+          type: number
+          description: CO2(g) per ATK (Available Tonnes per Kilometre)
+          format: double
+          example: 71.71
+          nullable: true
+        co2PerRpk:
+          type: number
+          description: CO2(g) per RPK (Intensity)
+          format: double
+          example: 102.49
+          nullable: true
+        co2PerRtk:
+          type: number
+          description: CO2(g) per RTK (Revenue Tonnes per Kilometre)
+          format: double
+          example: 92.48
+          nullable: true
+        decouplingIndex:
+          type: number
+          description: Decoupling Index
+          format: double
+          example: 50.55
+          nullable: true
+        flightCycles:
+          type: integer
+          description: Number of completed flights
+          format: int64
+          example: 50
+          nullable: true
+        fuelCost:
+          type: number
+          description: Fuel cost per CO2 tonne
+          format: double
+          example: 252842
+          nullable: true
+        portfolioName:
+          type: string
+          description: Returned only when a valid portfolioId was provided in the
+            request
+          example: Portfolio
+          nullable: true
+        rpk:
+          type: number
+          description: RPK - Revenue Seat Kilometres
+          format: double
+          example: 3.317235e+06
+          nullable: true
+        rtk:
+          type: number
+          description: Revenue Tonnes per Kilometre
+          format: double
+          example: 3.183921e+06
+          nullable: true
+        tankToWake:
+          type: number
+          description: Tank-to-Wake(TtW)
+          format: double
+          example: 680
+          nullable: true
+        wellToTank:
+          type: number
+          description: Well-to-Tank (WtT)
+          format: double
+          example: 173.06
+          nullable: true
+        wellToWake:
+          type: number
+          description: Well-to-Wake(WtW)
+          format: double
+          example: 853.06
+          nullable: true
+    CreatePaceFlightsReport-FmInput:
+      type: object
+      properties:
+        calculationsData:
+          $ref: '#/components/schemas/PaceflightsCalculationsData'
+        fromDate:
+          type: string
+          description: The latest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-01-01"
+        groupBy:
+          $ref: '#/components/schemas/PaceflightsGroupByParams'
+        metricsField:
+          $ref: '#/components/schemas/PaceflightsMetricFields'
+        portfolioId:
+          type: integer
+          description: The portfolio ID that was generated by PACE and returned in
+            the API response when the portfolio is created
+          format: int32
+        toDate:
+          type: string
+          description: The latest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-01-31"
+    CreatePortfolioReport-FmInput:
+      type: object
+      properties:
+        fromDate:
+          type: string
+          description: Represents the Portfolio Member start date. This will be the
+            earliest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-01-01"
+        portfolioId:
+          type: integer
+          description: Pace generated Portfolio ID
+          format: int32
+        toDate:
+          type: string
+          description: Represents the Portfolio Member end date. This will be the
+            latest date for the data set being queried. Format YYYY-MM-DD
+          example: "2022-01-31"
+      required:
+      - portfolioId
+    HealthcheckHealthcheckResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    HealthcheckReachabilityResponse:
+      type: object
+      properties:
+        message:
+          type: string
+    PaceflightsAircraftData:
+      type: object
+      properties:
+        aircraftIata:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        aircraftIcao:
+          type: boolean
+          description: The ICAO code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        aircraftSeatCount:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        aircraftType:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        aircraftVariant:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        manufacturer:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        msn:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        yearOfManufacture:
+          type: boolean
+          description: The IATA code for the aircraft type used on the route. Value
+            can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+    PaceflightsAirlineData:
+      type: object
+      properties:
+        operatorIata:
+          type: boolean
+          description: ' Represents IATA assigned code of the origin airport (ie.
+            “BA” = British Airways). Value can be set to ''true'' or ''false''. If
+            false, value will not be included in report and calculations will not
+            be based on this parameter'
+        operatorIcao:
+          type: boolean
+          description: Represents aeroplane operator's three-letter code according
+            to ICAO Doc. Value can be set to 'true' or 'false'. If false, value will
+            not be included in report and calculations will not be based on this parameter
+        operatorName:
+          type: boolean
+          description: Represents aeroplane operator's name. Value can be set to 'true'
+            or 'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+    PaceflightsCalculationsData:
+      type: object
+      properties:
+        carbonCost:
+          type: number
+          description: When included in the request, the API will base the carbon
+            cost based on this user-defined CO2 per tonne value. This field must be
+            present when requesting the 'carbonCost' response metric
+          format: double
+          example: 90.5
+        fuelCost:
+          type: number
+          description: When included in the request, the API will base the carbon
+            cost based on this user-defined fuel cost. This field must be present
+            when requesting the 'fuelCost' response metric
+          format: double
+          example: 74.5
+        loadFactor:
+          type: number
+          description: The user has the ability to over-ride any PACE defined passenger
+            load-factor. Where this field is not populated the response data will
+            utilise the PACE default data for this metric. A value of '81.21' in this
+            field implies that all flights within the returned dataset have a load-factor
+            of 81.21. The load-factor value is a key input field for all RPK related
+            metrics
+          format: double
+          example: 80
+        paxCargoRatio:
+          type: number
+          description: The user has the ability to over-ride any PACE defined Cargo:Passenger
+            ratio. Where this field is not populated the response data will utilise
+            the PACE default data for this metric. A value of '55.21' in this field
+            implies that 55.21 of all emissions for all flights within the returned
+            dataset are attributed to passengers, with the remaining 44.79 of emissions
+            attributes to cargo
+          format: double
+          example: 74.5
+      description: Calculations data section
+    PaceflightsGeographicalData:
+      type: object
+      properties:
+        destinationAirportIata:
+          type: boolean
+          description: IATA assigned code of the origin airport. Value can be set
+            to 'true' or 'false'. If false, value will not be included in report and
+            calculations will not be based on this parameter
+        destinationCountryIso:
+          type: boolean
+          description: ISO 3166-1 alpha-3 code of the destination country. Value can
+            be set to 'true' or 'false'. If false, value will not be included in report
+            and calculations will not be based on this parameter
+        destinationRegionCode:
+          type: boolean
+          description: Geographical region. Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        originAirportIata:
+          type: boolean
+          description: IATA assigned code of the origin airport. Value can be set
+            to 'true' or 'false'. If false, value will not be included in report and
+            calculations will not be based on this parameter
+        originCountryIso:
+          type: boolean
+          description: ISO 3166-1 alpha-3 code of the country of origin. Value can
+            be set to 'true' or 'false'. If false, value will not be included in report
+            and calculations will not be based on this parameter
+        originRegionCode:
+          type: boolean
+          description: Geographical region. Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+    PaceflightsGroupByParams:
+      type: object
+      properties:
+        aircraftData:
+          $ref: '#/components/schemas/PaceflightsAircraftData'
+        airlineData:
+          $ref: '#/components/schemas/PaceflightsAirlineData'
+        geographicalData:
+          $ref: '#/components/schemas/PaceflightsGeographicalData'
+        portfolioLevelData:
+          $ref: '#/components/schemas/PaceflightsPortfolioLevelData'
+      description: GroupBy section includes values that report should include and
+        that results from report should be grouped by
+    PaceflightsMetricFields:
+      type: object
+      properties:
+        ask:
+          type: boolean
+          description: ASK - Available Seat Kilometres. Value can be set to 'true'
+            or 'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        atk:
+          type: boolean
+          description: Available Tonnes per Kilometre. Value can be set to 'true'
+            or 'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        carbonCost:
+          type: boolean
+          description: Carbon cost per CO2 tonne. Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        co2:
+          type: boolean
+          description: Absolute CO2 emissions sum. Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        co2PerAsk:
+          type: boolean
+          description: CO2(g) per ASK. Value can be set to 'true' or 'false'. If false,
+            value will not be included in report and calculations will not be based
+            on this parameter
+        co2PerAskPaxOnly:
+          type: boolean
+          description: CO2(g) per ASK PAX only (PAX = Passengers). Value can be set
+            to 'true' or 'false'. If false, value will not be included in report and
+            calculations will not be based on this parameter
+        co2PerAtk:
+          type: boolean
+          description: CO2(g) per ATK (Available Tonnes per Kilometre). Value can
+            be set to 'true' or 'false'. If false, value will not be included in report
+            and calculations will not be based on this parameter
+        co2PerRPKPaxOnly:
+          type: boolean
+          description: CO2(g) per RPK (PAX Only). Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        co2PerRpk:
+          type: boolean
+          description: CO2(g) per RPK (Intensity). Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        co2PerRtk:
+          type: boolean
+          description: CO2(g) per RTK (Revenue Tonnes per Kilometre). Value can be
+            set to 'true' or 'false'. If false, value will not be included in report
+            and calculations will not be based on this parameter
+        co2e:
+          type: boolean
+          description: Co2 equivalent. Value can be set to 'true' or 'false'. If false,
+            value will not be included in report and calculations will not be based
+            on this parameter
+        decouplingIndex:
+          type: boolean
+          description: Decoupling Index. Value can be set to 'true' or 'false'. If
+            false, value will not be included in report and calculations will not
+            be based on this parameter
+        emissionYear:
+          type: boolean
+          description: Represents year from which queried results are grouped by.
+            Value can be set to 'true' or 'false'. If false, value will not be included
+            in report and calculations will not be based on this parameter
+        flightCycles:
+          type: boolean
+          description: Number of completed flights. Value can be set to 'true' or
+            'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        rpk:
+          type: boolean
+          description: RPK - Revenue Seat Kilometres. Value can be set to 'true' or
+            'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        rtk:
+          type: boolean
+          description: Revenue Tonnes per Kilometre. Value can be set to 'true' or
+            'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        tankToWake:
+          type: boolean
+          description: Tank-to-Wake(TtW). Value can be set to 'true' or 'false'. If
+            false, value will not be included in report and calculations will not
+            be based on this parameter
+        totalDistance:
+          type: boolean
+          description: Value can be set to 'true' or 'false'. If false, value will
+            not be included in report and calculations will not be based on this parameter
+        wellToTank:
+          type: boolean
+          description: Well-to-Tank (WtT). Value can be set to 'true' or 'false'.
+            If false, value will not be included in report and calculations will not
+            be based on this parameter
+        wellToWake:
+          type: boolean
+          description: Well-to-Wake(WtW). Value can be set to 'true' or 'false'. If
+            false, value will not be included in report and calculations will not
+            be based on this parameter
+      description: Metrics Field section that includes metrics that should be calculated
+        and added into report
+    PaceflightsPortfolioLevelData:
+      type: object
+      properties:
+        clientReference:
+          type: boolean
+          description: Represents aeroplane operator's name. Value can be set to 'true'
+            or 'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        loanParticipation:
+          type: boolean
+          description: Represents participation in the loan. Value can be set to 'true'
+            or 'false'. If false, value will not be included in report and calculations
+            will not be based on this parameter
+        loanParticipationEndDate:
+          type: boolean
+          description: Represents end date of loan participation. Value can be set
+            to 'true' or 'false'. If false, value will not be included in report and
+            calculations will not be based on this parameter
+        loanParticipationStartDate:
+          type: boolean
+          description: Represents start date of load participation. Value can be set
+            to 'true' or 'false'. If false, value will not be included in report and
+            calculations will not be based on this parameter
+    PorfolioCreationInput:
+      type: object
+      properties:
+        portfolioName:
+          type: string
+          description: Name of the portfolio. Between 1 to 100 characters are accepted
+          maxLength: 100
+          minLength: 1
+      required:
+      - portfolioName
+    PorfolioUpdateInput:
+      type: object
+      properties:
+        portfolioName:
+          type: string
+          description: Name of the portfolio. Between 1 to 100 characters are accepted
+          maxLength: 100
+          minLength: 1
+      required:
+      - portfolioName
+    Portfolio:
+      type: object
+      properties:
+        createdAt:
+          type: string
+          format: date-time
+        entityID:
+          type: string
+        entityName:
+          type: string
+        id:
+          type: integer
+          format: int32
+        portfolioName:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        userID:
+          type: string
+        userName:
+          type: string
+    PortfolioPaginatedResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Portfolio'
+          description: List of items
+        order:
+          type: string
+          description: Requested order
+          example: id desc
+        page:
+          type: integer
+          description: Page number
+          format: int32
+          example: 1
+        pageSize:
+          type: integer
+          description: Page size. Max number of item peer page
+          format: int32
+          example: 50
+        total:
+          type: integer
+          description: Total number of entries
+          format: int64
+          example: 1500
+    PortfolioPortfolioUpdateStatusDto:
+      type: object
+      properties:
+        deletedRows:
+          type: integer
+          format: int32
+        editedRows:
+          type: integer
+          format: int32
+        id:
+          type: integer
+          format: int32
+        newAircraftCount:
+          type: integer
+          format: int32
+        portfolioID:
+          type: integer
+          format: int32
+        status:
+          type: string
+    ReportReportResponse:
+      type: object
+      properties:
+        reportId:
+          type: integer
+          description: The report ID that was generated by PACE and returned in the
+            API response when the report is created
+          format: int32
+        status:
+          type: string
+          description: 'Status of report that was set to create. Status values can
+            be: generating, generating and generatedFailed'
+  securitySchemes:
+    openId:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+tags:
+- name: API
+  description: Api Documentation
+- name: Co2Metric
+  description: Co2 Metrics
+- name: Health
+  description: Healthcheck method
+- name: Portfolio
+  description: Portfolio management resources
+- name: Reachability
+  description: Check for api reachability
+- name: Report
+  description: Report management resources
+security:
+- openId: []
