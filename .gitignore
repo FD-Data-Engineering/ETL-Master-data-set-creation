@@ -1,2 +1,5 @@
 # Vizualisation Files too big need to be ignored in Repo
-use-cases/gama/visualization/Output_HTML/Output_HTML/*.html 
+use-cases/gama/visualization/Output_HTML/Output_HTML/*.html
+use-cases/gamma_oldv/visualization/Output_HTML/Output_HTML/Sligo_Flood_Rating.html 
+use-cases/gamma_oldv/visualization/Output_HTML/Output_HTML/Sligo_Gamma_Loan_IndexSearch.html
+ 
