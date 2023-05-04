@@ -1,0 +1,2 @@
+# Vizualisation Files too big need to be ignored in Repo
+use-cases/gama/visualization/Output_HTML/Output_HTML/*.html 
