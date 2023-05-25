@@ -90,7 +90,7 @@ def getCSVdf(dataDict):
 ####################################
 dtStr = datetime.today().strftime('%Y%m%d')
 cos = getCOSconfig()
-itemList = getBucketContents(cos,"publishedairbusdata",[dtStr,"csv"])
+itemList = getBucketContents(cos,"publishedairbusdata",[dtStr,".csv"])
 print(itemList)
 dataDict =  getCSVFromBucket(cos,"publishedairbusdata",itemList)
 
