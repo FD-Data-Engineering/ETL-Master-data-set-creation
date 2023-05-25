@@ -42,7 +42,6 @@ def main():
     logger.debug("Date :: "+dtStr)
     logger.info("######################################")
 
-
     ####################################
     # Read CSV Data
     ####################################
@@ -51,21 +50,17 @@ def main():
     logger.info(portfolioData)
     logger.info("######################################")
 
-    #df_portfolio_schema = StructType().add("id",IntegerType(),True).add("uprn",IntegerType(),True).add("postcode_flag",StringType(),True).add("easting",DoubleType(),True).add("northing",DoubleType(),True).add("rhighscore",IntegerType(),True).add("currentloan",DoubleType(),True).add("currentltv",DoubleType(),True)
-    
     df_portfolio_csv = (
         spark.read
         .format("csv")
         .option("header", True)
         .option("encoding", "UTF-8")
         .option("mode", "PERMISSIVE")
-        #.schema(df_portfolio_schema)
         .load(portfolioData)
     ).cache()
     
     for col in df_portfolio_csv.columns:
         df_portfolio_csv = df_portfolio_csv.withColumnRenamed(col, col.lower())
-    #df_portfolio_csv.columns.map(f -> df_portfolio_csv.withColumnRenamed(f, lower(f)))
 
     logger.info("######################################")
     logger.info("PORTFOLIO CSV DATA SCHEMA")
@@ -84,8 +79,6 @@ def main():
     logger.info(twinnData)
     logger.info("######################################")
     
-    #df_twinn_schema = StructType().add("id",IntegerType(),True).add("uprn",IntegerType(),True).add("easting",DoubleType(),True).add("northing",DoubleType(),True).#add("latitude",DoubleType(),True).add("longitude",DoubleType(),True)
-
     df_twinn_csv = (
         spark.read
         .format("csv")
@@ -93,14 +86,11 @@ def main():
         .option("encoding", "UTF-8")
         .option("mode", "PERMISSIVE")
         .option("inferSchema", "true")
-        #.schema(df_twinn_schema)
         .load(twinnData)
     ).cache()
     
     for col in df_twinn_csv.columns:
         df_twinn_csv = df_twinn_csv.withColumnRenamed(col, col.lower())
-    
-    #df_twinn_csv.columns.map(f -> df_twinn_csv.withColumnRenamed(f, lower(f)))
     
     logger.info("######################################")
     logger.info("TWINN CSV DATA SCHEMA")
@@ -117,9 +107,6 @@ def main():
     logger.info(latLongData)
     logger.info("######################################")
     
-    #df_latlong_schema = StructType().add("id",IntegerType(),True).add("uprn",IntegerType(),True)
-
-
     df_latlong_csv = (
         spark.read
         .format("csv")
@@ -128,15 +115,12 @@ def main():
         .option("mode", "PERMISSIVE")
         .option("inferSchema", "true")
         .option("inferSchema", "true")
-        #.schema(df_latlong_schema)
         .load(latLongData)
     ).cache()
     
     for col in df_latlong_csv.columns:
         df_latlong_csv = df_latlong_csv.withColumnRenamed(col, col.lower())
-    
-    #df_latlong_csv.columns.map(f -> df_latlong_csv.withColumnRenamed(f, lower(f)))
- 
+  
     logger.info("######################################")
     logger.info("LAT LONG CSV DATA SCHEMA")
     logger.info("######################################")
@@ -153,9 +137,7 @@ def main():
     logger.info("CREATING UNIFIED AIRBUS DATA")
     
     logger.info("######################################")
-    
-    #df_merged_gamma_data = df_ecad.join(df_ber,df_ecad.ecad_id == df_ber.ecad_id,"inner").join(df_flood,df_ecad.building_id == df_flood.ecad_id,"inner").drop(df_ber.ecad_id).drop(df_flood.ecad_id)
-    
+        
     df_merged_airbus_data = df_portfolio_csv.join(df_latlong_csv,df_portfolio_csv.id == df_latlong_csv.id,"inner").join(df_twinn_csv,df_portfolio_csv.id == df_twinn_csv.id,"inner").drop(df_latlong_csv.id).drop(df_twinn_csv.id).drop(df_latlong_csv.easting).drop(df_latlong_csv.northing).drop(df_twinn_csv.uprn).drop(df_latlong_csv.uprn)             
 
     logger.info("######################################")
@@ -169,7 +151,8 @@ def main():
     logger.debug("TARGET :: "+"/usr/local/spark/resources/data/staging/airbus/dt="+dtStr)
     logger.info("######################################")
 
-    df_merged_airbus_data.coalesce(1).write.option("header",True).mode('overwrite').csv("cos://publishedairbusdata.Airbus/merged_airbus_esg/dt="+dtStr+"/mergedfile.csv")
+    df_merged_airbus_data.coalesce(1).write.option("header",True).mode('overwrite').csv("cos://publishedairbusdata.Airbus/merged_airbus_esg/dt="+dtStr+"/CSV_FILE")
+    df_merged_airbus_data.coalesce(1).write.option("header",True).mode('overwrite').json("cos://publishedairbusdata.Airbus/merged_airbus_esg/dt="+dtStr+"/JSON_FILE")
 
 
     spark.stop()
