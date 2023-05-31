@@ -4,6 +4,4 @@ use-cases/gamma_oldv/visualization/Output_HTML/Output_HTML/Sligo_Flood_Rating.ht
 use-cases/gamma_oldv/visualization/Output_HTML/Output_HTML/Sligo_BER_Rating.html 
 use-cases/gamma_oldv/visualization/Output_HTML/Output_HTML/Sligo_Gamma_Loan_IndexSearch.html
 use-cases/airbus-demo/data/input/01_NBS_Portfolio_Bristol_230216/*.html
-use-cases/airbus-demo/data/input/01_NBS_Portfolio_Bristol_230216/Bristol_Airbus_Nwide_Energy_Rating.html
-use-cases/airbus-demo/data/input/01_NBS_Portfolio_Bristol_230216/Bristol_Airbus_Nwide_Flood_Rating.html
-use-cases/airbus-demo/data/input/01_NBS_Portfolio_Bristol_230216/Bristol_Airbus_Nwide_Loanbook_IndexSearch.html 
+use-cases/airbus-demo/data/output/visualization_Bristol_Airbus_Nationwide_loanbook/*.html
