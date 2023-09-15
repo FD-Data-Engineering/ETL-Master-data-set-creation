@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="visualization1">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/use-cases/gamma/gama/visualization/Output_HTML (2).zip!/" />
+      <root url="jar://$PROJECT_DIR$/use-cases/gamma/gama/visualization/Gamma_Loan_Visualization.zip!/" />
+      <root url="jar://$PROJECT_DIR$/use-cases/gamma/gama/visualization/Output_HTML.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
