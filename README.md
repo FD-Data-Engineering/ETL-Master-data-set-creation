@@ -3,10 +3,10 @@
 
  # Use Cases
 
-   - - 1. -  R.I. - Sligo Bay      
+   - - a. -  R.I. - Sligo bay      
           -  - Hazards, Floodability, BER and LoanBook data - includes an master dataset creation for the Loan Book project match with EPC and Gamma Data
-   - - 2. -  U.K. - Bristol city  -
+   - - b. -  U.K. - Bristol city  -
           -  Hazards, Floodability, EPC and LoanBook data -  with EPC rating and floodability - anonimized data 
-   - - 3. -  U.S. - Tampa F.L.    
+   - - c. -  U.S. - Tampa F.L.    
           - - Hazards, Floodability, EPC and LoanBook data -  with EPC rating and floodability - anonimized data  
 
